@@ -65,9 +65,9 @@
         /* Phone Input Styling */
         .phone-input {
             display: flex;
-            align-items: center;
             margin-bottom: 20px;
             gap: 10px;
+            align-items: center;
         }
 
         .phone-code {
@@ -80,8 +80,7 @@
         }
 
         .phone-input input {
-            flex: 1;
-            box-sizing: border-box;
+            flex-grow: 1; /* Fixed the alignment issue */
         }
 
         .phone-input input:invalid {
@@ -137,6 +136,10 @@
             border-radius: 10px;
             cursor: pointer;
             transition: background-color 0.3s;
+        }
+
+        .time-selector button.selected {
+            background-color: #F57C00; /* Darker shade for selected */
         }
 
         .time-selector button:hover {
@@ -208,9 +211,9 @@
         <!-- Time Period Selector -->
         <label for="hour">Sélectionnez une période:</label>
         <div class="time-selector" id="time-selector">
-            <button>8h - 11h</button>
-            <button>12h - 15h</button>
-            <button>16h - 19h</button>
+            <button class="time-button">8h - 11h</button>
+            <button class="time-button">12h - 15h</button>
+            <button class="time-button">16h - 19h</button>
         </div>
 
         <button type="submit">Confirmer le Rendez-vous</button>
@@ -248,6 +251,15 @@
             }
             daySelector.appendChild(dayButton);
         }
+
+        // Handle time period selection
+        const timeButtons = document.querySelectorAll('.time-button');
+        timeButtons.forEach(button => {
+            button.onclick = function() {
+                timeButtons.forEach(btn => btn.classList.remove('selected'));
+                button.classList.add('selected');
+            };
+        });
 
         document.querySelector('form').addEventListener('submit', function(event) {
             event.preventDefault();
