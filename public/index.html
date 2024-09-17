@@ -8,7 +8,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
         body {
             font-family: 'Roboto', sans-serif; /* Improved font */
-            background-color: #F5F6FA; /* Background color from your brand */
+            background-color: #F5F6FA; /* Background color */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -22,7 +22,7 @@
             border-radius: 20px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 500px; /* Larger container */
+            max-width: 500px;
             text-align: center;
             box-sizing: border-box;
             transition: transform 0.3s;
@@ -47,11 +47,6 @@
             color: #555;
         }
 
-        input {
-            font-size: 14px;
-        }
-
-        /* Input Styling */
         input, select {
             width: 100%;
             padding: 12px;
@@ -59,6 +54,12 @@
             border-radius: 10px;
             border: 1px solid #ddd;
             box-sizing: border-box;
+            font-size: 14px;
+            transition: box-shadow 0.3s;
+        }
+
+        input:hover, select:hover {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
         /* Phone Input Styling */
@@ -71,7 +72,7 @@
 
         .phone-code {
             padding: 12px;
-            background-color: #FFA726; /* Lighter shade of orange */
+            background-color: #FFE0B2; /* Lighter version of FFA726 */
             color: white;
             border-radius: 10px;
             font-weight: bold;
@@ -79,7 +80,7 @@
         }
 
         .phone-input input {
-            width: 100%;
+            flex: 1;
             box-sizing: border-box;
         }
 
@@ -92,21 +93,18 @@
             display: flex;
             justify-content: space-between;
             margin-bottom: 20px;
-            flex-wrap: wrap;
         }
 
         .day-selector button {
             flex: 1;
             margin: 5px;
-            background-color: #FFA726; /* Lighter shade of orange */
+            background-color: #FFE0B2; /* Lighter color */
             color: white;
             border: none;
             padding: 15px;
             border-radius: 10px;
             cursor: pointer;
             transition: background-color 0.3s;
-            width: calc(33.333% - 10px); /* Same size for all date buttons */
-            box-sizing: border-box;
         }
 
         .day-selector button.selected {
@@ -119,38 +117,35 @@
         }
 
         .day-selector button:hover {
-            background-color: #FB8C00; /* Hover shade of orange */
+            background-color: #FB8C00; /* Hover shade */
         }
 
-        /* Time Selector Styling */
+        /* Time Period Selector */
         .time-selector {
             display: flex;
             justify-content: space-between;
             margin-bottom: 20px;
-            flex-wrap: wrap;
         }
 
         .time-selector button {
             flex: 1;
             margin: 5px;
-            background-color: #FFA726; /* Lighter shade of orange */
+            background-color: #FFE0B2; /* Lighter color */
             color: white;
             border: none;
             padding: 15px;
             border-radius: 10px;
             cursor: pointer;
             transition: background-color 0.3s;
-            width: calc(33.333% - 10px); /* Make buttons fit 3 per row */
-            box-sizing: border-box;
         }
 
         .time-selector button:hover {
-            background-color: #FB8C00; /* Hover shade of orange */
+            background-color: #FB8C00; /* Hover shade */
         }
 
         /* Black Button */
         button {
-            background-color: #000; /* Button in black */
+            background-color: #000; /* Black button */
             color: white;
             padding: 12px;
             border: none;
@@ -162,7 +157,7 @@
         }
 
         button:hover {
-            background-color: #333; /* Darker black on hover */
+            background-color: #333; /* Darker hover */
         }
 
         .confirmation {
@@ -210,10 +205,12 @@
             <!-- Days will be dynamically added by JavaScript -->
         </div>
 
-        <!-- Time Selector (Hours Only) -->
-        <label for="hour">Sélectionnez une heure:</label>
+        <!-- Time Period Selector -->
+        <label for="hour">Sélectionnez une période:</label>
         <div class="time-selector" id="time-selector">
-            <!-- Time slots will be dynamically added by JavaScript -->
+            <button>8h - 11h</button>
+            <button>12h - 15h</button>
+            <button>16h - 19h</button>
         </div>
 
         <button type="submit">Confirmer le Rendez-vous</button>
@@ -250,18 +247,6 @@
                 };
             }
             daySelector.appendChild(dayButton);
-        }
-
-        // Populate time slots with hours only (7:00 AM to 7:00 PM)
-        const timeSelector = document.getElementById('time-selector');
-        for (let hour = 7; hour < 19; hour++) {
-            const timeButton = document.createElement('button');
-            timeButton.textContent = `${hour}:00`;
-            timeButton.onclick = function() {
-                document.querySelectorAll('.time-selector button').forEach(btn => btn.classList.remove('selected'));
-                timeButton.classList.add('selected');
-            };
-            timeSelector.appendChild(timeButton);
         }
 
         document.querySelector('form').addEventListener('submit', function(event) {
