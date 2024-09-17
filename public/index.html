@@ -5,35 +5,98 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Réserver un Rendez-vous</title>
     <style>
-        /* Add your brand colors here */
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f0f0f0;
-            color: #333;
+            background-color: #F4F4F4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
+
         .container {
             background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            max-width: 400px;
-            margin: auto;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
         }
-        button {
-            background-color: #F57C00; /* Replace with brand color */
+
+        h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 14px;
+            display: block;
+            margin-bottom: 5px;
+            text-align: left;
+            color: #555;
+        }
+
+        .phone-input {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .phone-input img {
+            margin-right: 10px;
+            width: 24px;
+            height: 24px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .date-selector, .time-selector {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .date-selector button, .time-selector button {
+            width: 48%;
+            padding: 12px;
+            background-color: #F57C00;
             color: white;
             border: none;
-            padding: 10px;
-            border-radius: 4px;
+            border-radius: 10px;
+            font-size: 14px;
             cursor: pointer;
         }
-        button:hover {
-            background-color: #E65100; /* Replace with brand color */
-        }
-        select, input {
-            padding: 10px;
+
+        button {
+            background-color: #F57C00;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
             width: 100%;
-            margin-bottom: 10px;
+        }
+
+        button:hover {
+            background-color: #E65100;
+        }
+
+        .confirmation {
+            display: none;
+            margin-top: 20px;
+            color: #4CAF50;
+            font-size: 16px;
         }
     </style>
 </head>
@@ -46,33 +109,77 @@
             <input type="text" id="name" name="name" required placeholder="Entrez votre nom">
 
             <label for="phone">Téléphone:</label>
-            <input type="tel" id="phone" name="phone" required placeholder="Entrez votre téléphone">
+            <div class="phone-input">
+                <img src="https://www.countryflags.com/wp-content/uploads/morocco-flag-png-large.png" alt="Morocco Flag">
+                <input type="tel" id="phone" name="phone" required placeholder="+212" value="+212" maxlength="13">
+            </div>
 
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required placeholder="Entrez votre email">
 
             <label for="day">Sélectionnez un jour:</label>
-            <select id="day" name="day" required>
-                <!-- Options for days (assuming this month) -->
-                <option value="">Sélectionner un jour</option>
-                <!-- Dynamically filled by the server -->
-            </select>
+            <div class="date-selector">
+                <button type="button" id="prev-day">◀</button>
+                <select id="day" name="day" required>
+                    <!-- Options for days will be populated by JS -->
+                </select>
+                <button type="button" id="next-day">▶</button>
+            </div>
 
             <label for="hour">Sélectionnez une heure:</label>
-            <select id="hour" name="hour" required>
-                <!-- Options will be limited based on confirmed appointments -->
-            </select>
+            <div class="time-selector" id="time-selector">
+                <!-- Dynamic Time Slots will be populated by JS -->
+            </div>
 
             <button type="submit">Confirmer le Rendez-vous</button>
         </form>
+
+        <div class="confirmation" id="confirmation-message">
+            Merci pour votre soumission. Nous vous appellerons pour confirmer le rendez-vous.
+        </div>
     </div>
 
     <script>
-        // JavaScript will handle fetching available times and days dynamically
+        const daySelect = document.getElementById('day');
+        const timeSelector = document.getElementById('time-selector');
+        const confirmationMessage = document.getElementById('confirmation-message');
+
+        // Generate the next 15 days in the date selector
+        function populateDays() {
+            const today = new Date();
+            for (let i = 0; i < 15; i++) {
+                const day = new Date(today);
+                day.setDate(today.getDate() + i);
+                const option = document.createElement('option');
+                option.value = day.toISOString().split('T')[0];
+                option.textContent = day.toLocaleDateString('fr-FR', { weekday: 'long', month: 'long', day: 'numeric' });
+                daySelect.appendChild(option);
+            }
+        }
+
+        // Populate time slots from 7 AM to 7 PM with 15-minute intervals
+        function populateHours() {
+            const hours = [];
+            for (let i = 7; i < 19; i++) {
+                ['00', '15', '30', '45'].forEach(minute => {
+                    const time = `${i}:${minute}`;
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.textContent = time;
+                    button.classList.add('time-slot');
+                    timeSelector.appendChild(button);
+                });
+            }
+        }
+
         document.getElementById('rendezvous-form').addEventListener('submit', function(event) {
             event.preventDefault();
-            // Submit the form data to the server via AJAX
+            confirmationMessage.style.display = 'block';
         });
+
+        populateDays();
+        populateHours();
     </script>
+
 </body>
 </html>
