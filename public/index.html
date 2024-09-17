@@ -8,7 +8,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap');
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #F7F7F7; /* Soft Gray for background */
+            background-color: #F7F7F7;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -17,7 +17,7 @@
         }
 
         .container {
-            background-color: #FFFFFF; /* White for the card background */
+            background-color: #FFFFFF;
             padding: 30px;
             border-radius: 20px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
@@ -40,7 +40,7 @@
         h1 {
             font-size: 26px;
             font-weight: 500;
-            color: #333333; /* Dark Gray for text */
+            color: #333333;
             margin-bottom: 20px;
         }
 
@@ -49,7 +49,7 @@
             display: block;
             margin-bottom: 5px;
             text-align: left;
-            color: #333333; /* Dark Gray for labels */
+            color: #333333;
         }
 
         input, select {
@@ -57,7 +57,7 @@
             padding: 15px 20px;
             margin-bottom: 10px;
             border-radius: 10px;
-            border: 1px solid #E0E0E0; /* Light Gray for input borders */
+            border: 1px solid #E0E0E0;
             box-sizing: border-box;
             font-size: 16px;
             transition: box-shadow 0.3s, transform 0.2s ease-in-out;
@@ -68,40 +68,33 @@
         }
 
         input:focus {
-            border-color: #3F8CFF; /* Primary Blue for focus */
+            border-color: #3F8CFF;
             box-shadow: 0 0 8px rgba(63, 140, 255, 0.3);
         }
 
-        input:focus + label, input:not(:placeholder-shown) + label {
-            transform: translateY(-25px);
-            font-size: 12px;
-            color: #3F8CFF; /* Primary Blue for floating label */
-        }
-
-        /* Error message styling */
-        .error-message {
-            color: #E65100;
-            font-size: 12px;
-            margin-bottom: 15px;
-            text-align: left;
-        }
-
+        /* Phone input with flag */
         .phone-input {
             display: flex;
             align-items: center;
             margin-bottom: 10px;
-            border: 1px solid #E0E0E0; /* Light Gray for input borders */
+            border: 1px solid #E0E0E0;
             border-radius: 10px;
             overflow: hidden;
-            background-color: #F7F7F7; /* Soft Gray for the phone code background */
+            background-color: #F7F7F7;
         }
 
         .phone-code {
-            background-color: #F7F7F7; /* Soft Gray for the phone code background */
+            background-color: #F7F7F7;
             padding: 12px;
-            color: #C45900; /* Dark Orange for text */
+            color: #C45900;
             font-weight: bold;
+            display: flex;
+            align-items: center;
             white-space: nowrap;
+        }
+
+        .phone-code img {
+            margin-right: 8px;
         }
 
         .phone-input input {
@@ -110,80 +103,49 @@
             border: none;
         }
 
-        .phone-input input:invalid {
-            border-color: #E65100;
+        /* Modal Popup for Confirmation */
+        .confirmation-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1001;
+            text-align: center;
         }
 
-        .day-selector {
-            display: flex;
-            justify-content: space-between;
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+
+        .modal-checkmark {
+            font-size: 40px;
+            color: #50C878;
             margin-bottom: 10px;
         }
 
-        .day-selector button {
-            flex: 1;
-            margin: 5px;
-            background-color: #E0F0FF; /* Light Blue for unselected buttons */
-            color: #C45900; /* Dark Orange for text */
-            border: none;
-            padding: 15px;
-            border-radius: 10px;
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 18px;
             cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s ease-in-out;
+            color: red;
         }
 
-        .day-selector button.selected {
-            background-color: #3F8CFF; /* Primary Blue for selected buttons */
-            color: white;
-            border: 2px solid #3F8CFF;
-            box-shadow: 0 0 15px rgba(63, 140, 255, 0.5);
-        }
-
-        .day-selector button.disabled {
-            background-color: #e0e0e0;
-            cursor: not-allowed;
-            opacity: 0.5;
-            transition: opacity 0.3s ease-out;
-        }
-
-        .day-selector button:hover {
-            background-color: #3F8CFF;
-            transform: scale(1.05);
-        }
-
-        .time-selector {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .time-selector button {
-            flex: 1;
-            margin: 5px;
-            background-color: #E0F0FF; /* Light Blue for unselected buttons */
-            color: #C45900;
-            border: none;
-            padding: 15px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s ease-in-out;
-        }
-
-        .time-selector button.selected {
-            background-color: #3F8CFF; /* Primary Blue for selected buttons */
-            color: white;
-            border: 2px solid #3F8CFF;
-            box-shadow: 0 0 15px rgba(63, 140, 255, 0.5);
-        }
-
-        .time-selector button:hover {
-            background-color: #3F8CFF;
-            transform: scale(1.05);
-        }
-
-        /* Submit button hover only */
         button.submit-btn {
-            background-color: #3F8CFF; /* Primary Blue for submit button */
+            background-color: #3F8CFF;
             color: white;
             padding: 12px;
             border: none;
@@ -196,116 +158,23 @@
         }
 
         button.submit-btn:hover {
-            background-color: #4CAF50; /* Green for hover state */
+            background-color: #4CAF50;
             transform: scale(1.05);
         }
 
-        .confirmation {
-            display: none;
-            margin-top: 20px;
-            color: white;
-            background-color: #50C878; /* Mint Green for success message */
-            padding: 20px;
-            border-radius: 10px;
-            opacity: 0;
-            transition: opacity 0.5s ease-in;
+        .confirmation-message {
+            font-size: 18px;
+            color: #50C878;
         }
 
-        .confirmation.show {
-            opacity: 1;
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                width: 90%;
-                padding: 20px;
-            }
-
-            .day-selector, .time-selector {
-                flex-direction: row;
-                gap: 10px;
-            }
-
-            input, select, button {
-                font-size: 14px;
-                padding: 10px;
-            }
-
-            h1 {
-                font-size: 22px;
-            }
-
-            button.submit-btn {
-                position: fixed;
-                bottom: 20px;
-                left: 0;
-                right: 0;
-                margin: 0 auto;
-                width: 90%;
-            }
-        }
-
-        .language-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(10px);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-        }
-
-        .language-popup {
-            background-color: #fff;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            width: 60%;
-            border-radius: 10px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-            animation: fadeIn 0.3s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: scale(0.9); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-
-        .language-option {
-            width: 48%;
-            padding: 50px;
-            text-align: center;
-            cursor: pointer;
-            background-color: #F57C00;
-            color: white;
-            border-radius: 10px;
-            transition: transform 0.3s;
-            font-size: 22px;
-        }
-
-        .language-option:hover {
-            transform: scale(1.05);
-        }
     </style>
 </head>
 <body>
 
-    <!-- Language Selection Overlay -->
-    <div class="language-overlay" id="language-overlay">
-        <div class="language-popup">
-            <div class="language-option" onclick="setLanguage('fr')">🇫🇷 Français</div>
-            <div class="language-option" onclick="setLanguage('ar')">🇲🇦 العربية</div>
-        </div>
-    </div>
-
+    <!-- Phone Input Field with Country Code -->
     <div class="container" id="form-container">
         <h1 id="form-title">Réserver un Rendez-vous</h1>
 
-        <!-- Form starts here -->
         <form id="rendezvous-form">
             <!-- Name Input -->
             <label for="name" id="name-label">Nom:</label>
@@ -315,133 +184,52 @@
             <!-- Phone Input with combined country code -->
             <label for="phone" id="phone-label">Téléphone:</label>
             <div class="phone-input">
-                <div class="phone-code">🇲🇦 +212</div>
-                <input type="tel" id="phone" name="phone" placeholder="6XXXXXXXX" pattern="\d{9}" required>
+                <div class="phone-code">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Flag_of_Morocco.svg" width="20" alt="Morocco Flag">
+                    +212
+                </div>
+                <input type="tel" id="phone" name="phone" placeholder="6XXXXXXXX" pattern="\d{9,10}" required>
             </div>
             <div id="phone-error" class="error-message"></div>
 
-            <!-- Email Input -->
-            <label for="email" id="email-label">Email:</label>
-            <input type="email" id="email" name="email" placeholder="Entrez votre email" required>
-            <div id="email-error" class="error-message"></div>
-
-            <!-- Day Selector -->
-            <label for="day" id="day-label">Sélectionnez un jour:</label>
-            <div class="day-selector" id="day-selector"></div>
-
-            <!-- Time Period Selector -->
-            <label for="hour" id="hour-label">Sélectionnez une période:</label>
-            <div class="time-selector" id="time-selector">
-                <button type="button" class="time-button">8h - 11h</button>
-                <button type="button" class="time-button">12h - 15h</button>
-                <button type="button" class="time-button">16h - 19h</button>
-            </div>
-
-            <button type="submit" class="submit-btn">Confirmer le Rendez-vous</button>
+            <!-- Submit Button -->
+            <button type="submit" class="submit-btn">
+                Confirmer le Rendez-vous
+                <img src="http://www.w3.org/2000/svg" alt="Icon">
+            </button>
         </form>
+    </div>
 
-        <div class="confirmation" id="confirmation-message">
-            Merci pour votre soumission. Nous vous appellerons pour confirmer le rendez-vous.
-        </div>
+    <!-- Modal Popup -->
+    <div class="modal-overlay" id="modal-overlay"></div>
+    <div class="confirmation-modal" id="confirmation-modal">
+        <span class="close-button" id="close-button">&times;</span>
+        <div class="modal-checkmark">✔</div>
+        <div class="confirmation-message">Succès! Votre rendez-vous est bien pris en compte. Vous recevrez un appel de confirmation sous peu.</div>
     </div>
 
     <script>
-        // Function to switch between French and Arabic
-        function setLanguage(language) {
-            const formContainer = document.getElementById('form-container');
-            const overlay = document.getElementById('language-overlay');
-            overlay.style.display = 'none'; // Hide the language popup
-            formContainer.classList.add('active'); // Show the form container
-
-            if (language === 'fr') {
-                document.getElementById('form-title').textContent = 'Réserver un Rendez-vous';
-                document.getElementById('name-label').textContent = 'Nom:';
-                document.getElementById('phone-label').textContent = 'Téléphone:';
-                document.getElementById('email-label').textContent = 'Email:';
-                document.getElementById('day-label').textContent = 'Sélectionnez un jour:';
-                document.getElementById('hour-label').textContent = 'Sélectionnez une période:';
-                document.getElementById('submit-button').textContent = 'Confirmer le Rendez-vous';
-                document.body.style.direction = 'ltr'; // Reset to LTR
-            } else if (language === 'ar') {
-                document.getElementById('form-title').textContent = 'حجز موعد';
-                document.getElementById('name-label').textContent = 'الاسم:';
-                document.getElementById('phone-label').textContent = 'الهاتف:';
-                document.getElementById('email-label').textContent = 'البريد الإلكتروني:';
-                document.getElementById('day-label').textContent = 'اختر اليوم:';
-                document.getElementById('hour-label').textContent = 'اختر الفترة:';
-                document.getElementById('submit-button').textContent = 'تأكيد الموعد';
-                document.body.style.direction = 'rtl'; // Flip to RTL for Arabic
-            }
-        }
-
-        // Populate the day selector with the next 7 days (excluding Sundays)
-        const daySelector = document.getElementById('day-selector');
-        const today = new Date();
-
-        for (let i = 0; i < 7; i++) {
-            const day = new Date(today);
-            day.setDate(today.getDate() + i);
-            const dayButton = document.createElement('button');
-            const dayOfWeek = day.getDay();
-            dayButton.textContent = `${day.toLocaleDateString('fr-FR', { weekday: 'short' })} ${day.getDate()} ${day.toLocaleDateString('fr-FR', { month: 'short' })}`;
-
-            // Disable Sundays (dayOfWeek 0 is Sunday)
-            if (dayOfWeek === 0) {
-                dayButton.classList.add('disabled');
-                dayButton.disabled = true;
-            } else {
-                dayButton.classList.add('day-button');
-                if (i === 0) {
-                    dayButton.classList.add('selected');
-                }
-                dayButton.onclick = function() {
-                    document.querySelectorAll('.day-selector button').forEach(btn => btn.classList.remove('selected'));
-                    dayButton.classList.add('selected');
-                };
-            }
-            daySelector.appendChild(dayButton);
-        }
-
-        // Handle time period selection
-        const timeButtons = document.querySelectorAll('.time-button');
-        timeButtons.forEach(button => {
-            button.onclick = function() {
-                timeButtons.forEach(btn => btn.classList.remove('selected'));
-                button.classList.add('selected');
-            };
-        });
-
-        // Form submission with error validation
+        // Handle form submission
         document.getElementById('rendezvous-form').addEventListener('submit', function(event) {
             event.preventDefault();
 
-            // Reset error messages
-            document.getElementById('name-error').textContent = '';
-            document.getElementById('phone-error').textContent = '';
-            document.getElementById('email-error').textContent = '';
+            // Show confirmation modal
+            const modal = document.getElementById('confirmation-modal');
+            const overlay = document.getElementById('modal-overlay');
+            modal.style.display = 'block';
+            overlay.style.display = 'block';
 
-            const name = document.getElementById('name').value.trim();
-            const phone = document.getElementById('phone').value.trim();
-            const email = document.getElementById('email').value.trim();
+            // Auto-close after 5 seconds
+            setTimeout(() => {
+                modal.style.display = 'none';
+                overlay.style.display = 'none';
+            }, 5000);
+        });
 
-            let isValid = true;
-
-            if (name === '') {
-                document.getElementById('name-error').textContent = 'Le nom est obligatoire.';
-                isValid = false;
-            }
-            if (!/^\d{9}$/.test(phone)) {
-                document.getElementById('phone-error').textContent = 'Veuillez entrer un numéro de téléphone valide.';
-                isValid = false;
-            }
-            if (email === '' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                document.getElementById('email-error').textContent = 'Veuillez entrer une adresse email valide.';
-                isValid = false;
-            }
-
-            if (isValid) {
-                document.getElementById('confirmation-message').style.display = 'block';
-            }
+        // Close button functionality
+        document.getElementById('close-button').addEventListener('click', function() {
+            document.getElementById('confirmation-modal').style.display = 'none';
+            document.getElementById('modal-overlay').style.display = 'none';
         });
     </script>
 
