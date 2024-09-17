@@ -25,7 +25,12 @@
             max-width: 500px;
             text-align: center;
             box-sizing: border-box;
+            display: none; /* Hidden until a language is chosen */
             transition: transform 0.3s;
+        }
+
+        .container.active {
+            display: block;
         }
 
         .container:hover {
@@ -44,7 +49,7 @@
             display: block;
             margin-bottom: 5px;
             text-align: left;
-            color: #555;
+            color: #333; /* Improved visibility */
         }
 
         input, select {
@@ -62,25 +67,28 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        /* Phone Input Styling */
+        /* Phone Input Styling - Combined Box */
         .phone-input {
             display: flex;
-            margin-bottom: 20px;
-            gap: 10px;
             align-items: center;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
         }
 
         .phone-code {
-            padding: 12px;
             background-color: #FFE0B2; /* Lighter version of FFA726 */
+            padding: 12px;
             color: white;
-            border-radius: 10px;
             font-weight: bold;
             white-space: nowrap;
         }
 
         .phone-input input {
-            flex-grow: 1; /* Fixed the alignment issue */
+            flex-grow: 1;
+            padding: 12px;
+            border: none;
         }
 
         .phone-input input:invalid {
@@ -98,7 +106,7 @@
             flex: 1;
             margin: 5px;
             background-color: #FFE0B2; /* Lighter color */
-            color: white;
+            color: #333; /* Improved visibility */
             border: none;
             padding: 15px;
             border-radius: 10px;
@@ -130,7 +138,7 @@
             flex: 1;
             margin: 5px;
             background-color: #FFE0B2; /* Lighter color */
-            color: white;
+            color: #333; /* Improved visibility */
             border: none;
             padding: 15px;
             border-radius: 10px;
@@ -180,43 +188,90 @@
                 gap: 10px;
             }
         }
+
+        /* Language Selection Overlay */
+        .language-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .language-popup {
+            background-color: #fff;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            width: 60%;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .language-option {
+            width: 48%;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            background-color: #F57C00;
+            color: white;
+            border-radius: 10px;
+            transition: transform 0.3s;
+        }
+
+        .language-option:hover {
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Réserver un Rendez-vous</h1>
+    <!-- Language Selection Overlay -->
+    <div class="language-overlay" id="language-overlay">
+        <div class="language-popup">
+            <div class="language-option" onclick="setLanguage('fr')">Français</div>
+            <div class="language-option" onclick="setLanguage('ar')">العربية</div>
+        </div>
+    </div>
+
+    <div class="container" id="form-container">
+        <h1 id="form-title">Réserver un Rendez-vous</h1>
 
         <!-- Name Input -->
-        <label for="name">Nom:</label>
+        <label for="name" id="name-label">Nom:</label>
         <input type="text" id="name" name="name" placeholder="Entrez votre nom" required>
 
-        <!-- Phone Input with separate country code -->
-        <label for="phone">Téléphone:</label>
+        <!-- Phone Input with combined country code -->
+        <label for="phone" id="phone-label">Téléphone:</label>
         <div class="phone-input">
             <div class="phone-code">🇲🇦 +212</div>
             <input type="tel" id="phone" name="phone" placeholder="6XXXXXXXX" pattern="\d{9}" required>
         </div>
 
         <!-- Email Input -->
-        <label for="email">Email:</label>
+        <label for="email" id="email-label">Email:</label>
         <input type="email" id="email" name="email" placeholder="Entrez votre email" required>
 
         <!-- Day Selector -->
-        <label for="day">Sélectionnez un jour:</label>
+        <label for="day" id="day-label">Sélectionnez un jour:</label>
         <div class="day-selector" id="day-selector">
             <!-- Days will be dynamically added by JavaScript -->
         </div>
 
         <!-- Time Period Selector -->
-        <label for="hour">Sélectionnez une période:</label>
+        <label for="hour" id="hour-label">Sélectionnez une période:</label>
         <div class="time-selector" id="time-selector">
             <button class="time-button">8h - 11h</button>
             <button class="time-button">12h - 15h</button>
             <button class="time-button">16h - 19h</button>
         </div>
 
-        <button type="submit">Confirmer le Rendez-vous</button>
+        <button type="submit" id="submit-button">Confirmer le Rendez-vous</button>
 
         <div class="confirmation" id="confirmation-message">
             Merci pour votre soumission. Nous vous appellerons pour confirmer le rendez-vous.
@@ -224,6 +279,33 @@
     </div>
 
     <script>
+        // Function to switch between French and Arabic
+        function setLanguage(language) {
+            const formContainer = document.getElementById('form-container');
+            const overlay = document.getElementById('language-overlay');
+            overlay.style.display = 'none'; // Hide the language popup
+
+            formContainer.classList.add('active'); // Show the form container
+
+            if (language === 'fr') {
+                document.getElementById('form-title').textContent = 'Réserver un Rendez-vous';
+                document.getElementById('name-label').textContent = 'Nom:';
+                document.getElementById('phone-label').textContent = 'Téléphone:';
+                document.getElementById('email-label').textContent = 'Email:';
+                document.getElementById('day-label').textContent = 'Sélectionnez un jour:';
+                document.getElementById('hour-label').textContent = 'Sélectionnez une période:';
+                document.getElementById('submit-button').textContent = 'Confirmer le Rendez-vous';
+            } else if (language === 'ar') {
+                document.getElementById('form-title').textContent = 'حجز موعد';
+                document.getElementById('name-label').textContent = 'الاسم:';
+                document.getElementById('phone-label').textContent = 'الهاتف:';
+                document.getElementById('email-label').textContent = 'البريد الإلكتروني:';
+                document.getElementById('day-label').textContent = 'اختر اليوم:';
+                document.getElementById('hour-label').textContent = 'اختر الفترة:';
+                document.getElementById('submit-button').textContent = 'تأكيد الموعد';
+            }
+        }
+
         // Populate the day selector with the next 7 days (excluding Sundays)
         const daySelector = document.getElementById('day-selector');
         const today = new Date();
