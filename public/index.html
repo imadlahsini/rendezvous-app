@@ -8,7 +8,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap');
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #F5F6FA;
+            background-color: #F7F7F7; /* Soft Gray for background */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -17,7 +17,7 @@
         }
 
         .container {
-            background-color: #fff;
+            background-color: #FFFFFF; /* White for the card background */
             padding: 30px;
             border-radius: 20px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
@@ -40,7 +40,7 @@
         h1 {
             font-size: 26px;
             font-weight: 500;
-            color: #333;
+            color: #333333; /* Dark Gray for text */
             margin-bottom: 20px;
         }
 
@@ -49,7 +49,7 @@
             display: block;
             margin-bottom: 5px;
             text-align: left;
-            color: #333;
+            color: #333333; /* Dark Gray for labels */
         }
 
         input, select {
@@ -57,7 +57,7 @@
             padding: 15px 20px;
             margin-bottom: 10px;
             border-radius: 10px;
-            border: 1px solid #ddd;
+            border: 1px solid #E0E0E0; /* Light Gray for input borders */
             box-sizing: border-box;
             font-size: 16px;
             transition: box-shadow 0.3s, transform 0.2s ease-in-out;
@@ -68,14 +68,14 @@
         }
 
         input:focus {
-            border-color: #009688;
-            box-shadow: 0 0 8px rgba(0, 150, 136, 0.3);
+            border-color: #3F8CFF; /* Primary Blue for focus */
+            box-shadow: 0 0 8px rgba(63, 140, 255, 0.3);
         }
 
         input:focus + label, input:not(:placeholder-shown) + label {
             transform: translateY(-25px);
             font-size: 12px;
-            color: #009688;
+            color: #3F8CFF; /* Primary Blue for floating label */
         }
 
         /* Error message styling */
@@ -90,15 +90,16 @@
             display: flex;
             align-items: center;
             margin-bottom: 10px;
-            border: 1px solid #ddd;
+            border: 1px solid #E0E0E0; /* Light Gray for input borders */
             border-radius: 10px;
             overflow: hidden;
+            background-color: #F7F7F7; /* Soft Gray for the phone code background */
         }
 
         .phone-code {
-            background-color: #FDF4EB;
+            background-color: #F7F7F7; /* Soft Gray for the phone code background */
             padding: 12px;
-            color: #C45900; 
+            color: #C45900; /* Dark Orange for text */
             font-weight: bold;
             white-space: nowrap;
         }
@@ -122,8 +123,8 @@
         .day-selector button {
             flex: 1;
             margin: 5px;
-            background-color: #FDF4EB;
-            color: #C45900;
+            background-color: #E0F0FF; /* Light Blue for unselected buttons */
+            color: #C45900; /* Dark Orange for text */
             border: none;
             padding: 15px;
             border-radius: 10px;
@@ -132,10 +133,10 @@
         }
 
         .day-selector button.selected {
-            background-color: #FE4A23;
+            background-color: #3F8CFF; /* Primary Blue for selected buttons */
             color: white;
-            border: 2px solid #009688;
-            box-shadow: 0 0 15px rgba(0, 150, 136, 0.5);
+            border: 2px solid #3F8CFF;
+            box-shadow: 0 0 15px rgba(63, 140, 255, 0.5);
         }
 
         .day-selector button.disabled {
@@ -146,7 +147,7 @@
         }
 
         .day-selector button:hover {
-            background-color: #F57C00;
+            background-color: #3F8CFF;
             transform: scale(1.05);
         }
 
@@ -159,7 +160,7 @@
         .time-selector button {
             flex: 1;
             margin: 5px;
-            background-color: #FDF4EB;
+            background-color: #E0F0FF; /* Light Blue for unselected buttons */
             color: #C45900;
             border: none;
             padding: 15px;
@@ -169,20 +170,20 @@
         }
 
         .time-selector button.selected {
-            background-color: #FE4A23;
+            background-color: #3F8CFF; /* Primary Blue for selected buttons */
             color: white;
-            border: 2px solid #009688;
-            box-shadow: 0 0 15px rgba(0, 150, 136, 0.5);
+            border: 2px solid #3F8CFF;
+            box-shadow: 0 0 15px rgba(63, 140, 255, 0.5);
         }
 
         .time-selector button:hover {
-            background-color: #F57C00;
+            background-color: #3F8CFF;
             transform: scale(1.05);
         }
 
         /* Submit button hover only */
         button.submit-btn {
-            background-color: #000;
+            background-color: #3F8CFF; /* Primary Blue for submit button */
             color: white;
             padding: 12px;
             border: none;
@@ -191,21 +192,19 @@
             cursor: pointer;
             width: 100%;
             transition: background-color 0.3s, transform 0.2s ease-in-out;
-            box-shadow: 0 4px 10px rgba(0, 150, 136, 0.3);
+            box-shadow: 0 4px 10px rgba(63, 140, 255, 0.3);
         }
 
         button.submit-btn:hover {
-            background-color: #28a745;
+            background-color: #4CAF50; /* Green for hover state */
             transform: scale(1.05);
         }
 
         .confirmation {
             display: none;
             margin-top: 20px;
-            color: #4CAF50;
-            font-size: 16px;
-            background-color: #d4edda;
-            border: 1px solid #c3e6cb;
+            color: white;
+            background-color: #50C878; /* Mint Green for success message */
             padding: 20px;
             border-radius: 10px;
             opacity: 0;
