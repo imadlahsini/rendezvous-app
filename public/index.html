@@ -81,17 +81,17 @@
 
         .time-selector {
             display: flex;
-            justify-content: space-between;
+            justify-content: space-between; /* Ensure all time slots fit in one line */
             margin-bottom: 20px;
+            flex-wrap: nowrap;
         }
 
         .time-selector button {
-            width: 30%; /* Fit three buttons in one line */
+            flex: 1 1 33%;  /* Each time button takes 1/3 of the line */
+            margin: 5px;
         }
 
         .day-selector button, .time-selector button {
-            flex: 0 0 auto;
-            margin: 10px;
             background-color: #FDF4EB;
             color: #C45900;
             border: none;
@@ -212,6 +212,48 @@
             background-color: #FF5722;
         }
 
+        /* Mobile Responsiveness */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .input-container input {
+                padding: 12px 12px 12px 45px;
+                font-size: 16px;
+            }
+
+            .input-container .fa {
+                font-size: 18px;
+            }
+
+            .time-selector button {
+                flex: 1 1 30%;  /* Ensure time slots fit in one line */
+                margin-bottom: 10px;
+            }
+
+            .day-selector button, .time-selector button {
+                font-size: 16px;
+                padding: 15px;
+            }
+
+            .submit-btn {
+                padding: 15px;
+                font-size: 20px;
+            }
+
+            .success-popup-content {
+                padding: 20px;
+            }
+
+            .checkmark {
+                font-size: 24px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -231,21 +273,18 @@
         <form id="rendezvous-form">
             <label for="name">Nom:</label>
             <div class="input-container">
-                <!-- FontAwesome icon for name -->
                 <i class="fa fa-user"></i>
                 <input type="text" id="name" placeholder="Entrez votre nom" required>
             </div>
 
             <label for="phone">Téléphone:</label>
             <div class="input-container">
-                <!-- FontAwesome icon for phone -->
                 <i class="fa fa-phone"></i>
-                <input type="tel" id="phone" placeholder="06XXXXXXXX" pattern="[6-7][0-9]{8}" inputmode="tel" required>
+                <input type="tel" id="phone" placeholder="06XXXXXXXX" pattern="(06|07)[0-9]{8}" inputmode="tel" required>
             </div>
 
             <label for="email">Email:</label>
             <div class="input-container">
-                <!-- FontAwesome icon for email -->
                 <i class="fa fa-envelope"></i>
                 <input type="email" id="email" placeholder="Entrez votre email" required>
             </div>
@@ -271,7 +310,6 @@
         // Success Popup Control
         function showSuccessPopup() {
             document.getElementById('success-popup').classList.add('show');
-            // Animate the progress bar
             setTimeout(() => {
                 document.getElementById('progress').style.width = '100%';
             }, 100);
