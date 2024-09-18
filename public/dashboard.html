@@ -1,120 +1,88 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tableau de bord des Rendez-vous</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
-            padding: 20px;
-        }
-
-        .container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            max-width: 800px;
-            margin: 0 auto;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f57c00;
-            color: white;
-        }
-
-        button {
-            padding: 10px;
-            background-color: #F57C00;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #E65100;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Manage Appointments</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .appointment {
+      padding: 10px;
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
+    }
+    .appointment button {
+      margin-top: 5px;
+      padding: 5px 10px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
+  <h1>Manage Draft Appointments</h1>
 
-    <div class="container">
-        <h1>Tableau de bord des Rendez-vous</h1>
-        <table>
-            <thead>
-                <tr>
-                    <th>Nom</th>
-                    <th>Téléphone</th>
-                    <th>Email</th>
-                    <th>Date</th>
-                    <th>Heure</th>
-                    <th>Statut</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="appointments-list">
-                <!-- Appointments will be dynamically added here -->
-            </tbody>
-        </table>
-    </div>
+  <div id="drafts-section">
+    <h3>Draft Appointments</h3>
+    <ul id="drafts-list"></ul>
+  </div>
 
-    <script>
-        const appointmentsList = document.getElementById('appointments-list');
+  <div id="confirm-section" style="display: none;">
+    <label for="exact-hour">Select Exact Hour:</label>
+    <input type="time" id="exact-hour" required>
+    <button onclick="confirmAppointment()">Confirm Appointment</button>
+  </div>
 
-        // Mocked appointment data (this should come from your server/backend)
-        const appointments = [
-            { name: 'John Doe', phone: '+212123456789', email: 'john@example.com', day: '2024-09-20', hour: '10:00', status: 'draft' },
-            { name: 'Jane Smith', phone: '+212987654321', email: 'jane@example.com', day: '2024-09-21', hour: '11:30', status: 'draft' },
-        ];
+  <script>
+    let selectedAppointmentId = null;
 
-        function loadAppointments() {
-            appointments.forEach((appointment, index) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${appointment.name}</td>
-                    <td>${appointment.phone}</td>
-                    <td>${appointment.email}</td>
-                    <td>${appointment.day}</td>
-                    <td>${appointment.hour}</td>
-                    <td>${appointment.status}</td>
-                    <td>
-                        <button onclick="confirmAppointment(${index})">Confirmer</button>
-                    </td>
-                `;
-                appointmentsList.appendChild(row);
-            });
-        }
+    // Fetch draft appointments and display them
+    function fetchDrafts() {
+      fetch('/appointments/drafts')
+        .then(response => response.json())
+        .then(drafts => {
+          const draftList = document.getElementById('drafts-list');
+          draftList.innerHTML = '';
+          drafts.forEach(draft => {
+            const listItem = document.createElement('li');
+            listItem.className = 'appointment';
+            listItem.textContent = `${draft.name} - ${draft.phone} - ${draft.selected_time_slot}`;
+            const confirmButton = document.createElement('button');
+            confirmButton.textContent = 'Confirm Appointment';
+            confirmButton.onclick = () => {
+              selectedAppointmentId = draft.id;
+              document.getElementById('confirm-section').style.display = 'block';
+            };
+            listItem.appendChild(confirmButton);
+            draftList.appendChild(listItem);
+          });
+        });
+    }
 
-        function confirmAppointment(index) {
-            appointments[index].status = 'confirmed';
-            appointmentsList.innerHTML = ''; // Clear the table
-            loadAppointments(); // Reload appointments with updated status
-        }
+    // Confirm an appointment
+    function confirmAppointment() {
+      const exactHour = document.getElementById('exact-hour').value;
+      fetch(`/appointments/confirm/${selectedAppointmentId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ exact_hour: exactHour })
+      })
+      .then(response => response.json())
+      .then(data => {
+        alert('Appointment confirmed!');
+        fetchDrafts(); // Refresh the drafts list
+        document.getElementById('confirm-section').style.display = 'none';
+      });
+    }
 
-        // Load appointments when the page is ready
-        loadAppointments();
-    </script>
-
+    // Load draft appointments when the page loads
+    window.onload = fetchDrafts;
+  </script>
 </body>
 </html>
-@
