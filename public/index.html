@@ -98,13 +98,13 @@
         }
 
         .day-selector {
-            flex-wrap: nowrap; /* Prevent wrapping */
-            overflow-x: scroll; /* Enable horizontal scroll */
+            flex-wrap: nowrap;
+            overflow-x: scroll;
             padding-bottom: 10px;
         }
 
         .day-selector::-webkit-scrollbar {
-            display: none; /* Hide scrollbar in WebKit browsers */
+            display: none;
         }
 
         .day-selector button, .time-selector button {
@@ -275,7 +275,7 @@
             <label for="phone">Téléphone:</label>
             <div class="phone-input">
                 <div class="phone-code">🇲🇦 +212</div>
-                <input type="tel" id="phone" placeholder="6XXXXXXXX" pattern="[6-7]\d{8}" required>
+                <input type="tel" id="phone" placeholder="6XXXXXXXX" pattern="[6-7][0-9]{8}" inputmode="tel" required>
             </div>
 
             <label for="email">Email:</label>
