@@ -1,87 +1,49 @@
+require('dotenv').config();
+const { Pool } = require('pg');
 const express = require('express');
-const bodyParser = require('body-parser');
-const twilio = require('twilio');
-const { Pool } = require('pg'); // PostgreSQL pool
-const path = require('path'); // For resolving file paths
-
 const app = express();
-app.use(bodyParser.json());
 
-// Serve static files from the "public" folder
-app.use(express.static('public'));
+app.use(express.json()); // For parsing JSON requests
 
-// Database connection
+// Connect to PostgreSQL using the DATABASE_URL from your .env file
 const pool = new Pool({
-  connectionString: 'postgresql://postgres:FvTCKHYwvreJpqdjVyFYyejZPjMnhUzB@postgres.railway.internal:5432/railway',
+  connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false
+    rejectUnauthorized: false, // Important for SSL connection on Railway
   }
 });
 
-// Use environment variables for Twilio credentials
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const client = require('twilio')(accountSid, authToken);
+// Function to query the database
+const query = (text, params) => pool.query(text, params);
 
-// Serve dashboard.html at "/dashboard"
-app.get('/dashboard', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
-});
-
-// Create a draft appointment
-app.post('/appointments/draft', async (req, res) => {
-  const { name, phone, email, selected_time_slot } = req.body;
+// Route to add a new appointment
+app.post('/api/appointments', async (req, res) => {
+  const { name, phone, date, timeSlot } = req.body;
   try {
-    const result = await pool.query(
-      'INSERT INTO appointments (name, phone, email, selected_time_slot, status) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [name, phone, email, selected_time_slot, 'draft']
+    const result = await query(
+      `INSERT INTO appointments (name, phone, date, time_slot, status) 
+       VALUES ($1, $2, $3, $4, 'Draft') RETURNING *`,
+      [name, phone, date, timeSlot]
     );
-    res.status(201).json({ message: 'Draft saved successfully', appointment: result.rows[0] });
+    res.json(result.rows[0]);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Error saving draft' });
+    console.error('Error adding appointment:', err);
+    res.status(500).json({ error: 'Failed to add appointment' });
   }
 });
 
-// Get all draft appointments
-app.get('/appointments/drafts', async (req, res) => {
+// Route to fetch all appointments
+app.get('/api/appointments', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM appointments WHERE status = $1', ['draft']);
+    const result = await query('SELECT * FROM appointments ORDER BY date, time_slot');
     res.json(result.rows);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Error fetching drafts' });
-  }
-});
-
-// Confirm an appointment
-app.post('/appointments/confirm/:id', async (req, res) => {
-  const appointmentId = req.params.id;
-  const { exact_hour } = req.body;
-
-  try {
-    const result = await pool.query('UPDATE appointments SET status = $1, exact_hour = $2 WHERE id = $3 RETURNING *', ['confirmed', exact_hour, appointmentId]);
-    const appointment = result.rows[0];
-
-    // Send SMS via Twilio
-    client.messages
-      .create({
-        body: `Your appointment is confirmed for ${appointment.exact_hour}`,
-        from: process.env.TWILIO_PHONE_NUMBER,  // Use the Twilio phone number from environment variables
-        to: appointment.phone
-      })
-      .then(message => console.log(message.sid))
-      .catch(err => console.error(err));
-
-    res.json({ message: 'Appointment confirmed and SMS sent', appointment });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Error confirming appointment' });
+    console.error('Error fetching appointments:', err);
+    res.status(500).json({ error: 'Failed to fetch appointments' });
   }
 });
 
 // Start the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
 });

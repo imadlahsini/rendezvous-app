@@ -322,102 +322,116 @@
         </form>
     </div>
 
-    <script>
-        // Success Popup Control
-        function showSuccessPopup() {
-            const popup = document.getElementById('success-popup');
-            const progressBar = document.getElementById('progress');
-            popup.classList.add('show');
-            progressBar.style.width = '0%'; // Reset progress bar
+   <script>
+    // Success Popup Control
+    function showSuccessPopup() {
+        const popup = document.getElementById('success-popup');
+        const progressBar = document.getElementById('progress');
+        popup.classList.add('show');
+        progressBar.style.width = '0%'; // Reset progress bar
 
-            // Animate progress bar
-            let width = 0;
-            const progressInterval = setInterval(() => {
-                if (width >= 100) {
-                    clearInterval(progressInterval);
-                    closePopup();
-                    location.reload(); // Refresh the page after progress is done
-                } else {
-                    width += 1;
-                    progressBar.style.width = width + '%';
-                }
-            }, 30); // Progress over 3 seconds
+        // Animate progress bar
+        let width = 0;
+        const progressInterval = setInterval(() => {
+            if (width >= 100) {
+                clearInterval(progressInterval);
+                closePopup();
+                location.reload(); // Refresh the page after progress is done
+            } else {
+                width += 1;
+                progressBar.style.width = width + '%';
+            }
+        }, 30); // Progress over 3 seconds
+    }
+
+    function closePopup() {
+        document.getElementById('success-popup').classList.remove('show');
+    }
+
+    // Form Submission
+    document.getElementById('rendezvous-form').addEventListener('submit', async function(event) {
+        event.preventDefault();
+        const selectedDay = document.querySelector('.day-button.selected');
+        const selectedTime = document.querySelector('.time-button.selected');
+
+        if (!selectedDay || !selectedTime) {
+            alert('Veuillez sélectionner un jour et une période.');
+            return;
         }
 
-        function closePopup() {
-            document.getElementById('success-popup').classList.remove('show');
+        const name = document.getElementById('name').value;
+        const phone = document.getElementById('phone').value;
+        const email = document.getElementById('email').value;
+
+        if (!name || !phone || !email) {
+            alert('Veuillez remplir tous les champs obligatoires.');
+            return;
         }
 
-        // Form Submission
-        document.getElementById('rendezvous-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const selectedDay = document.querySelector('.day-button.selected');
-            const selectedTime = document.querySelector('.time-button.selected');
+        // Form data collected
+        const formData = {
+            name,
+            phone,
+            email,
+            day: selectedDay.textContent,
+            time: selectedTime.textContent,
+        };
 
-            if (!selectedDay || !selectedTime) {
-                alert('Veuillez sélectionner un jour et une période.');
-                return;
+        try {
+            const response = await fetch('/api/appointments', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
+            if (response.ok) {
+                showSuccessPopup();  // Show success popup if the submission is successful
+            } else {
+                alert('Erreur lors de la soumission du rendez-vous.');
             }
+        } catch (error) {
+            console.error('Erreur de soumission:', error);
+        }
+    });
 
-            const name = document.getElementById('name').value;
-            const phone = document.getElementById('phone').value;
-            const email = document.getElementById('email').value;
+    // Day Selection
+    const daySelector = document.getElementById('day-selector');
+    const today = new Date();
+    const dayButtons = [];
 
-            if (!name || !phone || !email) {
-                alert('Veuillez remplir tous les champs obligatoires.');
-                return;
-            }
+    for (let i = 0; i < 7; i++) {
+        const date = new Date(today);
+        date.setDate(today.getDate() + i);
 
-            // Form data collected
-            const formData = {
-                name,
-                phone,
-                email,
-                day: selectedDay.textContent,
-                time: selectedTime.textContent,
-            };
-            console.log(formData);  // For now, log the data (can be sent to a server)
+        const dayButton = document.createElement('button');
+        dayButton.className = 'day-button';
+        dayButton.type = 'button';
+        dayButton.textContent = date.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
 
-            showSuccessPopup(); // Show success popup
+        if (date.getDay() === 0) {  // Disable Sundays
+            dayButton.classList.add('disabled');
+            dayButton.disabled = true;
+        }
+
+        dayButton.addEventListener('click', () => {
+            dayButtons.forEach(btn => btn.classList.remove('selected'));
+            dayButton.classList.add('selected');
         });
 
-        // Day Selection
-        const daySelector = document.getElementById('day-selector');
-        const today = new Date();
-        const dayButtons = [];
+        daySelector.appendChild(dayButton);
+        dayButtons.push(dayButton);
+    }
 
-        for (let i = 0; i < 7; i++) {
-            const date = new Date(today);
-            date.setDate(today.getDate() + i);
-
-            const dayButton = document.createElement('button');
-            dayButton.className = 'day-button';
-            dayButton.type = 'button';
-            dayButton.textContent = date.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
-
-            if (date.getDay() === 0) {  // Disable Sundays
-                dayButton.classList.add('disabled');
-                dayButton.disabled = true;
-            }
-
-            dayButton.addEventListener('click', () => {
-                dayButtons.forEach(btn => btn.classList.remove('selected'));
-                dayButton.classList.add('selected');
-            });
-
-            daySelector.appendChild(dayButton);
-            dayButtons.push(dayButton);
-        }
-
-        // Time Button Selection
-        const timeButtons = document.querySelectorAll('.time-button');
-        timeButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                timeButtons.forEach(btn => btn.classList.remove('selected'));
-                button.classList.add('selected');
-            });
+    // Time Button Selection
+    const timeButtons = document.querySelectorAll('.time-button');
+    timeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            timeButtons.forEach(btn => btn.classList.remove('selected'));
+            button.classList.add('selected');
         });
-    </script>
+    });
+</script>
 
 </body>
 </html>
