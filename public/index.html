@@ -76,13 +76,20 @@
             display: flex;
             justify-content: space-between;
             margin-bottom: 20px;
-            overflow-x: auto;
+            overflow-x: auto; /* Allow smooth horizontal scrolling */
             gap: 10px; /* Added spacing between buttons */
+            padding-bottom: 10px; /* Ensure padding for smoother scrolling */
+            scrollbar-width: thin; /* For Firefox */
+            -ms-overflow-style: none; /* For Internet Explorer and Edge */
+        }
+
+        .day-selector::-webkit-scrollbar {
+            display: none; /* Hide scrollbar for Webkit browsers */
         }
 
         .time-selector {
             display: flex;
-            justify-content: space-between; 
+            justify-content: space-between;
             margin-bottom: 20px;
             flex-wrap: nowrap;
         }
