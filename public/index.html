@@ -76,18 +76,19 @@
             display: flex;
             justify-content: space-between;
             margin-bottom: 20px;
-            overflow-x: auto; /* Scrollable day selector */
+            overflow-x: auto;
+            gap: 10px; /* Added spacing between buttons */
         }
 
         .time-selector {
             display: flex;
-            justify-content: space-between; /* Ensure all time slots fit in one line */
+            justify-content: space-between; 
             margin-bottom: 20px;
             flex-wrap: nowrap;
         }
 
         .time-selector button {
-            flex: 1 1 33%;  /* Each time button takes 1/3 of the line */
+            flex: 1 1 33%;
             margin: 5px;
         }
 
@@ -100,8 +101,15 @@
             font-size: 18px;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, box-shadow 0.3s;
             white-space: nowrap;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Added shadowing */
+        }
+
+        .day-selector button:hover, .time-selector button:hover {
+            background-color: #FE4A23; /* Hover effect */
+            color: white;
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
         }
 
         .day-selector button.selected, .time-selector button.selected {
@@ -158,7 +166,7 @@
         .success-popup-content {
             background-color: #fff;
             padding: 40px;
-            border-radius: 12px;
+            border-radius: 20px; /* Rounded popup */
             text-align: center;
             width: 90%;
             max-width: 400px;
@@ -176,6 +184,7 @@
 
         .progress-bar {
             margin-top: 20px;
+            margin-bottom: 20px; /* Spacing fixed */
             width: 100%;
             background-color: #f1f1f1;
             border-radius: 10px;
@@ -187,7 +196,7 @@
             height: 100%;
             background-color: #28a745;
             width: 0;
-            transition: width 1s ease;
+            transition: width 3s ease; /* Progress bar lasts 3 seconds */
         }
 
         .checkmark {
@@ -232,7 +241,7 @@
             }
 
             .time-selector button {
-                flex: 1 1 30%;  /* Ensure time slots fit in one line */
+                flex: 1 1 30%;
                 margin-bottom: 10px;
             }
 
@@ -309,15 +318,27 @@
     <script>
         // Success Popup Control
         function showSuccessPopup() {
-            document.getElementById('success-popup').classList.add('show');
-            setTimeout(() => {
-                document.getElementById('progress').style.width = '100%';
-            }, 100);
+            const popup = document.getElementById('success-popup');
+            const progressBar = document.getElementById('progress');
+            popup.classList.add('show');
+            progressBar.style.width = '0%'; // Reset progress bar
+
+            // Animate progress bar
+            let width = 0;
+            const progressInterval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(progressInterval);
+                    closePopup();
+                    location.reload(); // Refresh the page after progress is done
+                } else {
+                    width += 1;
+                    progressBar.style.width = width + '%';
+                }
+            }, 30); // Progress over 3 seconds
         }
 
         function closePopup() {
             document.getElementById('success-popup').classList.remove('show');
-            document.getElementById('progress').style.width = '0'; // Reset progress bar
         }
 
         // Form Submission
