@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <!-- [Rest of the head section remains the same] -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Réserver un Rendez-vous</title>
@@ -13,7 +12,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh; /* Adjusted to min-height */
+            min-height: 100vh;
             margin: 0;
         }
 
@@ -26,7 +25,6 @@
             max-width: 500px;
             text-align: center;
             box-sizing: border-box;
-            display: none;
             transition: transform 0.3s;
         }
 
@@ -95,12 +93,14 @@
             display: flex;
             justify-content: space-between;
             margin-bottom: 10px;
-            overflow-x: auto; /* Enable horizontal scrolling */
+            overflow-x: auto;
             -webkit-overflow-scrolling: touch;
         }
 
         .day-selector {
             flex-wrap: nowrap; /* Prevent wrapping */
+            overflow-x: scroll; /* Enable horizontal scroll */
+            padding-bottom: 10px;
         }
 
         .day-selector::-webkit-scrollbar {
@@ -108,7 +108,7 @@
         }
 
         .day-selector button, .time-selector button {
-            flex: 0 0 auto; /* Prevent buttons from shrinking */
+            flex: 0 0 auto;
             margin: 5px;
             background-color: #FDF4EB;
             color: #C45900;
@@ -117,7 +117,7 @@
             border-radius: 10px;
             cursor: pointer;
             transition: background-color 0.3s;
-            white-space: nowrap; /* Prevent text from wrapping */
+            white-space: nowrap;
         }
 
         .day-selector button.selected, .time-selector button.selected {
@@ -256,11 +256,11 @@
 <body>
 
     <!-- Success Popup -->
-    <div class="success-popup" id="success-popup">
+    <div class="success-popup" id="success-popup" role="dialog" aria-modal="true" aria-labelledby="popup-title">
         <div class="success-popup-content">
             <span class="close-icon" onclick="closePopup()" aria-label="Fermer le popup">✖</span>
-            <span class="checkmark">✔</span>
-            <p>Merci! Nous vous appellerons pour confirmer votre rendez-vous.</p>
+            <span class="checkmark" aria-hidden="true">✔</span>
+            <p id="popup-title">Merci! Nous vous appellerons pour confirmer votre rendez-vous.</p>
             <div class="progress-bar"><div id="progress"></div></div>
             <button class="close-popup" onclick="closePopup()">Fermer</button>
         </div>
@@ -268,14 +268,14 @@
 
     <div class="container active" id="form-container">
         <h1>Réserver un Rendez-vous</h1>
-        <form id="rendezvous-form">
+        <form id="rendezvous-form" novalidate>
             <label for="name">Nom:</label>
             <input type="text" id="name" placeholder="Entrez votre nom" required>
 
             <label for="phone">Téléphone:</label>
             <div class="phone-input">
                 <div class="phone-code">🇲🇦 +212</div>
-                <input type="tel" id="phone" placeholder="6XXXXXXXX" pattern="[6-7]\\d{8}" required>
+                <input type="tel" id="phone" placeholder="6XXXXXXXX" pattern="[6-7]\d{8}" required>
             </div>
 
             <label for="email">Email:</label>
@@ -298,79 +298,132 @@
     </div>
 
     <script>
-        let intervalID;
+        (function() {
+            let intervalID;
 
-        // Show success popup with animation
-        function showSuccessPopup() {
-            const popup = document.getElementById('success-popup');
-            const progressBar = document.getElementById('progress');
-            let width = 0;
-            progressBar.style.width = '0%'; // Reset progress bar
-            popup.classList.add('show');
+            // Show success popup with animation
+            function showSuccessPopup() {
+                const popup = document.getElementById('success-popup');
+                const progressBar = document.getElementById('progress');
+                let width = 0;
+                progressBar.style.width = '0%'; // Reset progress bar
+                popup.classList.add('show');
 
-            // Animate progress bar
-            intervalID = setInterval(() => {
-                if (width >= 100) {
-                    clearInterval(intervalID);
-                    closePopup();
-                } else {
-                    width++;
-                    progressBar.style.width = width + '%';
-                }
-            }, 50); // Adjust to fit 5 seconds
-        }
-
-        // Close the popup
-        function closePopup() {
-            const popup = document.getElementById('success-popup');
-            popup.classList.remove('show');
-            clearInterval(intervalID); // Clear the interval
-            document.getElementById('progress').style.width = '0%'; // Reset progress bar
-        }
-
-        // Simulate form submission
-        document.getElementById('rendezvous-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            showSuccessPopup();
-        });
-
-        // Generate the next 7 days dynamically
-        const daySelector = document.getElementById('day-selector');
-        const dayButtons = [];
-        const options = { weekday: 'short', day: 'numeric', month: 'short' };
-        const today = new Date();
-
-        for (let i = 0; i < 7; i++) {
-            const date = new Date(today);
-            date.setDate(today.getDate() + i);
-            const dayName = date.toLocaleDateString('fr-FR', options);
-            const button = document.createElement('button');
-            button.type = 'button';
-            button.className = 'day-button';
-            button.textContent = dayName;
-
-            if (date.getDay() === 0) { // Sunday is 0
-                button.classList.add('disabled');
-                button.disabled = true;
-            } else {
-                button.addEventListener('click', () => {
-                    dayButtons.forEach(btn => btn.classList.remove('selected'));
-                    button.classList.add('selected');
-                });
+                // Animate progress bar
+                intervalID = setInterval(() => {
+                    if (width >= 100) {
+                        clearInterval(intervalID);
+                        closePopup();
+                    } else {
+                        width++;
+                        progressBar.style.width = width + '%';
+                    }
+                }, 50); // Adjust to fit 5 seconds
             }
 
-            daySelector.appendChild(button);
-            dayButtons.push(button);
-        }
+            // Close the popup
+            function closePopup() {
+                const popup = document.getElementById('success-popup');
+                popup.classList.remove('show');
+                clearInterval(intervalID); // Clear the interval
+                document.getElementById('progress').style.width = '0%'; // Reset progress bar
+            }
 
-        // Time Selector Functionality
-        const timeButtons = document.querySelectorAll('.time-button');
-        timeButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                timeButtons.forEach(btn => btn.classList.remove('selected'));
-                button.classList.add('selected');
+            // Disable form submission on Enter keypress
+            document.getElementById('rendezvous-form').addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                }
             });
-        });
+
+            // Form submission handler
+            document.getElementById('rendezvous-form').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                // Validate day selection
+                const selectedDay = document.querySelector('.day-button.selected');
+                if (!selectedDay) {
+                    alert('Veuillez sélectionner un jour.');
+                    return;
+                }
+
+                // Validate time selection
+                const selectedTime = document.querySelector('.time-button.selected');
+                if (!selectedTime) {
+                    alert('Veuillez sélectionner une période.');
+                    return;
+                }
+
+                // Validate other form fields
+                const name = document.getElementById('name').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const email = document.getElementById('email').value.trim();
+
+                if (!name || !phone || !email) {
+                    alert('Veuillez remplir tous les champs obligatoires.');
+                    return;
+                }
+
+                // Collect form data
+                const formData = {
+                    name: name,
+                    phone: phone,
+                    email: email,
+                    day: selectedDay.textContent,
+                    time: selectedTime.textContent
+                };
+
+                // TODO: Send formData to the server via fetch or AJAX
+                console.log('Form Data:', formData);
+
+                // Proceed with showing the success popup
+                showSuccessPopup();
+
+                // Optionally, reset the form
+                document.getElementById('rendezvous-form').reset();
+                dayButtons.forEach(btn => btn.classList.remove('selected'));
+                timeButtons.forEach(btn => btn.classList.remove('selected'));
+            });
+
+            // Generate the next 7 days dynamically
+            const daySelector = document.getElementById('day-selector');
+            const dayButtons = [];
+            const options = { weekday: 'short', day: 'numeric', month: 'short' };
+
+            const today = new Date();
+
+            for (let i = 0; i < 7; i++) {
+                const date = new Date();
+                date.setDate(today.getDate() + i);
+                const dayName = date.toLocaleDateString('fr-FR', options);
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'day-button';
+                button.textContent = dayName;
+
+                if (date.getDay() === 0) { // Sunday is 0
+                    button.classList.add('disabled');
+                    button.disabled = true;
+                } else {
+                    button.addEventListener('click', () => {
+                        dayButtons.forEach(btn => btn.classList.remove('selected'));
+                        button.classList.add('selected');
+                    });
+                }
+
+                daySelector.appendChild(button);
+                dayButtons.push(button);
+            }
+
+            // Time Selector Functionality
+            const timeButtons = document.querySelectorAll('.time-button');
+            timeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    timeButtons.forEach(btn => btn.classList.remove('selected'));
+                    button.classList.add('selected');
+                });
+            });
+        })();
     </script>
 
 </body>
