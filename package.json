@@ -11,6 +11,7 @@
   "description": "A rendez-vous booking app",
   "dependencies": {
     "express": "^4.21.0",
+    "pg": "^8.13.0",
     "twilio": "^5.3.0"
   }
 }
