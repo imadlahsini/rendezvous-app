@@ -2,9 +2,13 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const twilio = require('twilio');
 const { Pool } = require('pg'); // PostgreSQL pool
+const path = require('path'); // For resolving file paths
 
 const app = express();
 app.use(bodyParser.json());
+
+// Serve static files from the "public" folder
+app.use(express.static('public'));
 
 // Database connection
 const pool = new Pool({
@@ -18,6 +22,11 @@ const pool = new Pool({
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = require('twilio')(accountSid, authToken);
+
+// Serve dashboard.html at "/dashboard"
+app.get('/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
+});
 
 // Create a draft appointment
 app.post('/appointments/draft', async (req, res) => {
