@@ -1,57 +1,78 @@
 const express = require('express');
-const path = require('path');
+const bodyParser = require('body-parser');
+const twilio = require('twilio');
+const { Pool } = require('pg'); // PostgreSQL pool
+
 const app = express();
+app.use(bodyParser.json());
 
-// Store appointments in memory for simplicity
-let appointments = [];
-
-// Serve static files
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.json());
-
-// Endpoint to get available hours
-app.get('/available-hours', (req, res) => {
-    const { day } = req.query;
-    const availableHours = generateAvailableHours(day);
-    res.json(availableHours);
+// Database connection
+const pool = new Pool({
+  connectionString: 'postgresql://postgres:FvTCKHYwvreJpqdjVyFYyejZPjMnhUzB@postgres.railway.internal:5432/railway',
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
-// Endpoint to submit an appointment (as draft)
-app.post('/submit', (req, res) => {
-    const { name, phone, email, day, hour } = req.body;
-    const appointment = { name, phone, email, day, hour, status: 'draft' };
-    appointments.push(appointment);
-    res.json({ message: 'Rendez-vous soumis en tant que brouillon.' });
+// Use environment variables for Twilio credentials
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const client = require('twilio')(accountSid, authToken);
+
+// Create a draft appointment
+app.post('/appointments/draft', async (req, res) => {
+  const { name, phone, email, selected_time_slot } = req.body;
+  try {
+    const result = await pool.query(
+      'INSERT INTO appointments (name, phone, email, selected_time_slot, status) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [name, phone, email, selected_time_slot, 'draft']
+    );
+    res.status(201).json({ message: 'Draft saved successfully', appointment: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error saving draft' });
+  }
 });
 
-// Endpoint to get all appointments for the dashboard
-app.get('/appointments', (req, res) => {
-    res.json(appointments);
+// Get all draft appointments
+app.get('/appointments/drafts', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM appointments WHERE status = $1', ['draft']);
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error fetching drafts' });
+  }
 });
 
-// Endpoint to confirm an appointment
-app.post('/confirm', (req, res) => {
-    const { index } = req.body;
-    appointments[index].status = 'confirmed';
-    res.json({ message: 'Rendez-vous confirmé.' });
+// Confirm an appointment
+app.post('/appointments/confirm/:id', async (req, res) => {
+  const appointmentId = req.params.id;
+  const { exact_hour } = req.body;
+
+  try {
+    const result = await pool.query('UPDATE appointments SET status = $1, exact_hour = $2 WHERE id = $3 RETURNING *', ['confirmed', exact_hour, appointmentId]);
+    const appointment = result.rows[0];
+
+    // Send SMS via Twilio
+    client.messages
+      .create({
+        body: `Your appointment is confirmed for ${appointment.exact_hour}`,
+        from: process.env.TWILIO_PHONE_NUMBER,  // Use the Twilio phone number from environment variables
+        to: appointment.phone
+      })
+      .then(message => console.log(message.sid))
+      .catch(err => console.error(err));
+
+    res.json({ message: 'Appointment confirmed and SMS sent', appointment });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error confirming appointment' });
+  }
 });
 
-// Helper function to generate available hours
-function generateAvailableHours(day) {
-    const hours = [];
-    for (let i = 7; i < 19; i++) {
-        ['00', '15', '30', '45'].forEach(minute => {
-            const time = `${i}:${minute}`;
-            if (!appointments.some(a => a.day === day && a.hour === time && a.status === 'confirmed')) {
-                hours.push(time);
-            }
-        });
-    }
-    return hours;
-}
-
-// Use the port provided by Railway or default to 3000 for local
+// Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
